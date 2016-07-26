@@ -1,0 +1,50 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="/static/css/silviastyles.css" type="text/css">
+    <!--Load the AJAX API-->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+          ['Month', 'Miles'],
+          ['January', 400],
+          ['February', 460],
+          ['March', 1120],
+          ['April', 540]
+        ]);
+
+        var options = {
+          title: 'Miles over time',
+          hAxis: {title: 'Month',  titleTextStyle: {color: '#333'}},
+          vAxis: {minValue: 0}
+        };
+
+        var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
+        chart.draw(data, options);
+      }
+    </script>
+  </head>
+
+  <h3><a href='/logout'>Log out</a></h3>
+  <body>
+    <h1>Welcome, {{session['name']}}</h1>
+
+     <ul>
+  		<li><a href="/dashboard"> My dashboard</a></li>
+  		<li><a href="/tripsbydate">Trips by date</a></li>
+  		<li><a href="/milestraveled">Miles traveled</a></li>
+	</ul> 
+  <h2> Enter a date range below and click "enter" to view miles traveled for a given date range</h2>
+  <form action='/displaymilestraveled' method='/post'>
+  	<label>Select trips ranging from</label><input type ='date' name ='startdate'>
+  	<label>To </label><input type ='date' name ='enddate'>
+  	<input type='Submit' value='VIEW MILES TRAVELED'>
+
+  </form>
+    <!--Div that will hold the pie chart-->
+   <div id="chart_div"></div>
+
+  </body>
+</html>
