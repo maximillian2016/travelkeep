@@ -65,8 +65,27 @@ class Welcome(Controller):
     def dashboard(self):
         return self.load_view('dashboard.html')
     
-    def viewmilestraveled(self):
-        return self.load_view('milestraveled.html')
+    def milestraveled(self):
+        return self.load_view('milestraveleddefault.html')
+
+    def calculatemilestraveled(self):
+        trip_info = { 
+            "start_date": request.form['startdate'],
+            "end_date": request.form['enddate'],
+            "rating": request.form['rating'],
+            "user_id": session['id']
+            }
+        session['start_date'] = trip_info['start_date']
+        session['end_date'] = trip_info['end_date']
+        session['rating'] = trip_info['rating']
+        milestraveled = self.models['WelcomeModel'].milestraveled(trip_info)
+        placesvisited = self.models['WelcomeModel'].placesvisited(trip_info)
+        pruned_places_visited=[]
+        for element in placesvisited:
+            if element not in pruned_places_visited:
+                pruned_places_visited.append(element)
+        return self.load_view('milestraveled.html', milestraveled = milestraveled, pruned_places_visited=pruned_places_visited)    
+
 
     
 

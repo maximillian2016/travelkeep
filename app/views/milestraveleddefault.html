@@ -1,0 +1,27 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="/static/css/silviastyles.css" type="text/css">
+  </head>
+
+  <h3><a href='/logout'>Log out</a></h3>
+  <body>
+    <h1>Welcome, {{session['name']}}</h1>
+
+     <ul>
+  		<li><a href="/dashboard"> My dashboard</a></li>
+  		<li><a href="/tripsbydate">Trips by date</a></li>
+  		<li><a href="/milestraveled">Miles traveled</a></li>
+	</ul> 
+  <h2> Enter a date range below and click "enter" to view miles traveled for a given date range</h2>
+  <form action='/calculatemilestraveled' method='post'>
+  	<label>Select trips ranging from</label><input type ='date' name ='startdate'>
+  	<label>To </label><input type ='date' name ='enddate'>
+    <label> Filter by trip rating: <label> <select name='rating'><option value ='1'>One Star</option> <option value ='2'>Two Stars</option><option value='3'>Three Stars</option><option value ='4'>Four Stars</option><option value='5'>Five Stars</option></select>  
+  	<input type='Submit' value='VIEW MILES TRAVELED'>
+
+  </form>
+    <!--Div that will hold the pie chart-->
+   <div id="chart_div"></div>
+
+  </body>
+</html>

@@ -23,7 +23,8 @@ routes['GET']['/register']='Welcome#register'
 routes['GET']['/login']='Welcome#login'
 routes['GET']['/dashboard']='Welcome#dashboard'
 routes['GET']['/logout']='Welcome#logout'
-routes['GET']['/milestraveled']='Welcome#viewmilestraveled'
+routes['GET']['/milestraveled']='Welcome#milestraveled'
+routes['POST']['/calculatemilestraveled']='Welcome#calculatemilestraveled'
 """
     You can add routes and specify their handlers as follows:
 

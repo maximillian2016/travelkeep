@@ -1,23 +1,39 @@
+<!DOCTYPE html5>
 <html>
   <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" href="/static/css/silviastyles.css" type="text/css">
-    <!--Load the AJAX API-->
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+<!-- Latest compiled and minified JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+        <!--Load the AJAX API-->
+     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
       google.charts.load('current', {'packages':['corechart']});
       google.charts.setOnLoadCallback(drawChart);
       function drawChart() {
         var data = google.visualization.arrayToDataTable([
-          ['Month', 'Miles'],
-          ['January', 400],
-          ['February', 460],
-          ['March', 1120],
-          ['April', 540]
+          ['Month of Travel', ''],
+          ['January', {{milestraveled[0]}}],
+          ['February', {{milestraveled[1]}}],
+          ['March', {{milestraveled[2]}}],
+          ['April', {{milestraveled[3]}}],
+          ['May', {{milestraveled[4]}}],
+          ['June', {{milestraveled[5]}}],
+          ['July', {{milestraveled[6]}}],
+          ['August', {{milestraveled[7]}}],
+          ['September', {{milestraveled[8]}}],
+          ['October', {{milestraveled[9]}}],
+          ['November',{{milestraveled[10]}}],
+          ['December',{{milestraveled[11]}}]
         ]);
 
         var options = {
-          title: 'Miles over time',
-          hAxis: {title: 'Month',  titleTextStyle: {color: '#333'}},
+          title: 'Miles traveled for {{session['rating']}} star trips taken from {{session['start_date']}} to {{session['end_date']}}',
+          hAxis: {title: 'Month of travel',  titleTextStyle: {color: '#333'}},
           vAxis: {minValue: 0}
         };
 
@@ -25,26 +41,48 @@
         chart.draw(data, options);
       }
     </script>
+
   </head>
 
-  <h3><a href='/logout'>Log out</a></h3>
   <body>
-    <h1>Welcome, {{session['name']}}</h1>
 
+  <div id="leftnav"><h3>Welcome, {{session['name']}}</h1> 
      <ul>
-  		<li><a href="/dashboard"> My dashboard</a></li>
-  		<li><a href="/tripsbydate">Trips by date</a></li>
-  		<li><a href="/milestraveled">Miles traveled</a></li>
-	</ul> 
-  <h2> Enter a date range below and click "enter" to view miles traveled for a given date range</h2>
-  <form action='/displaymilestraveled' method='/post'>
-  	<label>Select trips ranging from</label><input type ='date' name ='startdate'>
-  	<label>To </label><input type ='date' name ='enddate'>
-  	<input type='Submit' value='VIEW MILES TRAVELED'>
+      <li><a href="/dashboard"> My dashboard</a></li>
+      <li><a href="/tripsbydate">Trips by date</a></li>
+      <li><a href="/milestraveled">Miles traveled</a></li>
+      <li><a href="/">Add friends</a></li>
+      <li><a href="/">View friends trips</a></li>
+      <li><a href="'/logout'">Log out</a></li>
+  </ul>       
+</div>
+<hr>
+  <div id ="rightsection"><div><h4> Enter a date range, then click "view miles traveled" to view the miles traveled for a given date range:</h4></div>
+  <div><form action='/calculatemilestraveled' method='post'>
+    <div><label>Select trips ranging from:</label></div><input class ="btn btn-default" type ='date' name ='startdate'>
+    <div><label>To:</label></div><div><input class ="btn btn-default" type ='date' name ='enddate'></div></div>
+    <div><label> Filter by trip rating: <label> <select class ="btn btn-default" name='rating'><option value ='1'>One Star</option> <option value ='2'>Two Stars</option><option value='3'>Three Stars</option><option value ='4'>Four Stars</option><option value='5'>Five Stars</option></select></div> 
+     <div><input id="bttn" type='Submit' value='VIEW MILES TRAVELED'></div> 
 
   </form>
+
     <!--Div that will hold the pie chart-->
    <div id="chart_div"></div>
 
+  <table id='placesvisited'>
+        <tr> 
+          <td> Places visited: </td>
+          {%for element in pruned_places_visited %}
+            <td>{{element['end_location']}}</td>
+            {%endfor%}  
+        </tr> 
+      </table>  
+  <p> Search the places you've been to in a map!</p>
+  </div> 
+    
+
+
   </body>
 </html>
+
+<!--AIzaSyAfbP3QiaK7dEgNkMC34QqOWZ9VYovQDfI-->
