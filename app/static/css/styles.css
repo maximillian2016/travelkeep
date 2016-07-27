@@ -4,6 +4,10 @@ body{
 
 }
 
+a {
+  color: #068266 !important;
+}
+
 .loginForm{
   background-color: rgba(255, 255, 255, 0.44);
   position: absolute;
@@ -136,4 +140,9 @@ body{
   .mixItems .gap {
     width: 27.5%;
   }
+}
+
+.nav-pills>li.active>a, .nav-pills>li.active>a:focus, .nav-pills>li.active>a:hover {
+    color: #fff !important;
+    background-color: #068266 !important;
 }

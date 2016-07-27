@@ -9,6 +9,8 @@
 """
 from system.core.model import Model
 import re
+from datetime import datetime
+
 class WelcomeModel(Model):
     def __init__(self):
         super(WelcomeModel, self).__init__()
@@ -140,23 +142,42 @@ class WelcomeModel(Model):
 
 
 
-    def get_all_users(self):
-        return self.db.query_db("SELECT id, first_name, last_name, email, user_level, created_at FROM users ORDER BY created_at DESC")
+    def milestraveled(self, trip_info):
+        sum =0;
+        milesforeachmonth=[];
+        i=1
+        while i<13:
+            milesforeachmonth.append(0);
+            i= i+1
+        #SELECT * from trips join favorites on trips.id = favorites.trip_id join users on users.id=favorites.user_id where users.id =1#
+        totmilestraveled_query ="SELECT * from trips join favorites on trips.id = favorites.trip_id join users on users.id=favorites.user_id where users.id =:user_id and trips.start_date BETWEEN :startdate and :enddate AND trips.rating =:triprating"
+        totmilestraveled_data = {'startdate': trip_info['start_date'], 'enddate': trip_info['end_date'], 'triprating': trip_info['rating'], 'user_id': trip_info['user_id']}
+        totmilestraveled = self.db.query_db(totmilestraveled_query, totmilestraveled_data)
+        print "this is totmilestraveled", totmilestraveled
+        for element in totmilestraveled:
+            for i in range(0,12):
+                if element['end_date'].month == i+1:
+                    milesforeachmonth[i]= milesforeachmonth[i]+ int(element['trip_miles'])
+        print "This is the milesforeachmonth array ", milesforeachmonth
+        for element in totmilestraveled:
+            sum = sum + element['trip_miles']
+        return milesforeachmonth
+
+    def placesvisited(self, trip_info):
+        #SELECT * from trips join favorites on trips.id = favorites.trip_id join users on users.id=favorites.user_id where users.id =1#
+        placesvisited_query ="SELECT end_location from trips join favorites on trips.id = favorites.trip_id join users on users.id=favorites.user_id where users.id =:user_id and trips.start_date BETWEEN :startdate and :enddate AND trips.rating =:triprating"
+        placesvisited_data = {'startdate': trip_info['start_date'], 'enddate': trip_info['end_date'], 'triprating': trip_info['rating'], 'user_id': trip_info['user_id']}
+        placesvisited = self.db.query_db(placesvisited_query, placesvisited_data)
+        print "this is places visited", placesvisited
+        return placesvisited
+
 
     def get_user_by_id(self, user_id):
         # pass data to the query like so
       query = "SELECT id, first_name, last_name, email FROM users WHERE id = :user_id"
       data = { 'user_id': user_id}
       return self.db.query_db(query, data)
-     #begin update_user no validation
-    #def update_user(self, user):
-      # Building the query for the update
-      #query = "UPDATE users SET first_name=:first_name, last_name=:last_name, email=:email, user_level=:user_level WHERE id = :user_id"
-      # we need to pass the necessary data
-      #data = {'first_name': user['first_name'], 'last_name': user['last_name'], 'email': user['email'], 'user_id': user['id'], 'user_level': user['user_level']}
-      # run the update
-      #return self.db.query_db(query, data)
-      #end update_user no validation
+
 
     def getAllTrips(self):
         query = "SELECT * FROM trips ORDER BY start_date DESC"

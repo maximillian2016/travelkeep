@@ -1,14 +1,42 @@
 <html>
   <head>
-    <link rel="stylesheet" href="/static/css/silviastyles.css" type="text/css">
+    <link rel="stylesheet" href="/static/css/styles.css" type="text/css">
     <script type="text/javascript" src="/static/js/fbsdk.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
   </head>
-  <h3><a href='#' onclick="FB.logout();">Log out</a></h3>
   <body>
-    <h1>Welcome, {{session['name']}}</h1>
-    <p>
-      <img src="{{session['picture']}}" alt="" />
-    </p>
-    <div class="fb-login-button"  data-size="medium" data-auto-logout-link="true" onlogin="checkLoginState();"></div>
+    <!-- Nav Bar -->
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="/dashboard">
+            <img alt="Brand" style="height:50px;" src="/static/img/logo.png">
+          </a>
+        </div>
+        <div class="navProfileImg">
+          <ul class="nav navbar-nav navbar-right">
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{session['name']}} <img src="{{session['picture']}}" alt="" /> <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="#">My Profile</a></li>
+              <li role="separator" class="divider"></li>
+              {% if session['untoken'] %}
+                <li><a href="https://www.facebook.com/logout.php?next=http://localhost:5000/&access_token={{session['untoken']}}">Logout</a></li>
+              {% else %}
+                <li><a href="/logout">Logout</a></li>
+              {% endif %}
+            </ul>
+          </div>
+      </div>
+    </nav>
+    <!-- end Nav Bar  -->
+ <h1>Welcome, {{session['name']}}</h1>
+     <ul>
+  		<li><a href="/dashboard"> My dashboard</a></li>
+  		<li><a href="/tripsbydate">Trips by date</a></li>
+  		<li><a href="/milestraveled">Miles traveled</a></li>
+	</ul>
   </body>
 </html>
