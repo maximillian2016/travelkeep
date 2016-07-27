@@ -24,7 +24,8 @@ routes['GET']['/login']='Welcome#login'
 routes['GET']['/dashboard']='Welcome#dashboard'
 routes['GET']['/logout']='Welcome#logout'
 routes['GET']['/milestraveled']='Welcome#viewmilestraveled'
-routes['/tripsbydate'] = 'Welcome#tripsbydate'
+routes['GET']['/tripsbydate'] = 'Welcome#tripsbydate'
+routes['POST']['/fbcheck'] = 'Welcome#fbcheck'
 """
     You can add routes and specify their handlers as follows:
 

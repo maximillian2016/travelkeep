@@ -12,8 +12,21 @@ import re
 class WelcomeModel(Model):
     def __init__(self):
         super(WelcomeModel, self).__init__()
+
     def login_user(self, user_info):
         errors=[]
+        EMAIL_REGEX = re.compile(r'^[a-za-z0-9\.\+_-]+@[a-za-z0-9\._-]+\.[a-za-z]*$')
+
+        if not user_info['email']:
+            errors.append('Email cannot be blank')
+        elif not EMAIL_REGEX.match(user_info['email']):
+            errors.append('Email format must be valid!')
+        if not user_info['password']:
+            errors.append('Password cannot be blank')
+
+        if errors:
+            return {"status": False, "errors": errors}
+
         user_query = "SELECT * FROM users WHERE email = :email LIMIT 1"
         user_data = {'email': user_info['email']}
         user = self.db.query_db(user_query, user_data)
@@ -63,8 +76,8 @@ class WelcomeModel(Model):
                 user = self.db.query_db(user_query)
                 if user !=[]:
                     hashed_pw = self.bcrypt.generate_password_hash(password)
-                    create_query = "INSERT INTO users (first_name, last_name, email, password, created_at) VALUES (:first_name, :last_name, :email, :password, NOW())"
-                    create_data = {'first_name': info['first_name'], 'last_name': info['last_name'], 'email': info['email'], 'password': hashed_pw, 'share_w_friends': 0}
+                    create_query = "INSERT INTO users (first_name, last_name, email, password, created_at, updated_at, share_w_friends, picture) VALUES (:first_name, :last_name, :email, :password, NOW(), NOW(), :share_w_friends, :picture)"
+                    create_data = {'first_name': info['first_name'], 'last_name': info['last_name'], 'email': info['email'], 'password': hashed_pw, 'share_w_friends': 0, 'picture': "/static/img/default.png"}
                     self.db.query_db(create_query, create_data)# Code to insert user goes here...
             # Then retrieve the last inserted user.
                     get_user_query = "SELECT * FROM users ORDER BY id DESC LIMIT 1"
@@ -72,13 +85,60 @@ class WelcomeModel(Model):
                     return { "status": True, "user": users[0] }
                 else:
                     hashed_pw = self.bcrypt.generate_password_hash(password)
-                    create_query = "INSERT INTO users (first_name, last_name, email, password, share_w_friends, created_at) VALUES (:first_name, :last_name, :email, :password, :share_w_friends, NOW())"
-                    create_data = {'first_name': info['first_name'], 'last_name': info['last_name'], 'email': info['email'], 'password': hashed_pw, 'share_w_friends': 0}
+                    create_query = "INSERT INTO users (first_name, last_name, email, password, created_at, updated_at, share_w_friends, picture) VALUES (:first_name, :last_name, :email, :password, NOW(), NOW(), :share_w_friends, :picture)"
+                    create_data = {'first_name': info['first_name'], 'last_name': info['last_name'], 'email': info['email'], 'password': hashed_pw, 'share_w_friends': 0, 'picture': "/static/img/default.png"}
                     self.db.query_db(create_query, create_data)# Code to insert user goes here...
             # Then retrieve the last inserted user.
                     get_user_query = "SELECT * FROM users ORDER BY id DESC LIMIT 1"
                     users = self.db.query_db(get_user_query)
                     return { "status": True, "user": users[0] }
+
+    def fb_login(self, fb_user_info):
+
+        # hash token so that it is encripted on client
+        hashed_token = self.bcrypt.generate_password_hash(fb_user_info['FBtoken'])
+
+        exists_user_query = "SELECT * FROM users WHERE email = :email LIMIT 1"
+        exists_user_data = { 'email': fb_user_info['FBemail'] }
+        exists_user = self.db.query_db(exists_user_query, exists_user_data)
+
+        # login the fb user ASK if this is safe
+        if exists_user:
+
+            return { "status": True, "user": exists_user[0], "token": hashed_token }
+
+        # Register the fb user
+        else:
+
+            EMAIL_REGEX = re.compile(r'^[a-za-z0-9\.\+_-]+@[a-za-z0-9\._-]+\.[a-za-z]*$')
+            errors = []
+            # Some basic validation
+            if not fb_user_info['FBtoken']:
+                errors.append('Token cannot be blank')
+            if not fb_user_info['FBfirst_name']:
+                errors.append('First name cannot be blank')
+            if not fb_user_info['FBlast_name']:
+                errors.append('Last name cannot be blank')
+            if not fb_user_info['FBemail']:
+                errors.append('Email cannot be blank')
+            elif not EMAIL_REGEX.match(fb_user_info['FBemail']):
+                errors.append('Email format must be valid!')
+            if not fb_user_info['FBid']:
+                errors.append('id cannot be blank')
+            # If we hit errors, return them, else return True.
+            if errors:
+                return {"status": False, "errors": errors}
+            else:
+                fb_create_query = "INSERT INTO users (first_name, last_name, email, share_w_friends, created_at, updated_at, picture) VALUES (:first_name, :last_name, :email, :share_w_friends, NOW(), NOW(), :picture)"
+                fb_create_data = {'first_name': fb_user_info['FBfirst_name'], 'last_name': fb_user_info['FBlast_name'], 'email': fb_user_info['FBemail'], 'share_w_friends': 0, 'picture': fb_user_info['FBpicture']}
+                new_user = self.db.query_db(fb_create_query, fb_create_data)# Code to insert user goes here...
+                # Then retrieve the last inserted user.
+                get_user_query = "SELECT * FROM users WHERE id = :id LIMIT 1"
+                get_user_data = {'id': new_user}
+                user = self.db.query_db(get_user_query,get_user_data)
+                return { "status": True, "user": user[0], "token": hashed_token }
+
+
 
     def get_all_users(self):
         return self.db.query_db("SELECT id, first_name, last_name, email, user_level, created_at FROM users ORDER BY created_at DESC")
