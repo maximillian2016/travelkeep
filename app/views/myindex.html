@@ -1,0 +1,47 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="/static/css/styles.css" type="text/css">
+<!--added-->
+	 <script type="text/javascript" src="/static/js/fbsdk.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+ <!---->
+  </head>
+  <body style="display:inline-block;">
+	
+	<div style="border: 2px solid black; width:400px; height:600px; display:inline-block; font-size:200%; font-family:cursive; text-align:center; padding:10px; float:left; display:relative;">
+	<h1>Welcome, {{session['name']}}</h1>
+<!--/h1 style="display:block;">Hello {{name}}</h1-->
+	<ul>
+  		<li><a href="/dashboard"> My dashboard</a></li>
+  		<li><a href="/tripsbydate">Trips by date</a></li>
+  		<li><a href="/milestraveled">Miles traveled</a></li>
+		<li><a href="/milestraveled">Recent trips</a></li>
+		<li><a href="/milestraveled">Share with friends</a></li>
+	</ul>
+<!---->
+	</div>
+	
+	<div style="border: 2px solid red; width:500px; height:800px; display:inline-block; vertical-align: top; text-align:center; padding:10px; float:right;  display:relative;">
+	<form action="/Welcome/get_query" method='GET' >
+	<input type="hidden" name="get_fav_textbox"></input>
+	<input type="submit" name = "button" value="Favorite Trips" style="300px; 200px; font-family:cursive; font-size:200%;"></input>
+	</form>	
+	{%for i in miles%}
+    <a href="/welcome/detailed_trip_routing"><h3>{{i['name']}}</h3></a>
+	<p>Start:{{i['start_date']}}</p>
+	<p>End:{{i['end_date']}}</p>
+<!--Participants???-->
+	<p>Trip rating: {{i['rating']}}</p>
+	<p></p>
+	<p></p>
+	{%endfor%}
+	</div>
+
+		
+
+	
+	
+  </body>
+</html>
