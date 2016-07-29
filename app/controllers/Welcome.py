@@ -1,14 +1,9 @@
-"""
-<<<<<<< HEAD
-    Sample Controller File
-
-    A Controller should be in charge of responding to a request.
-    Load models to interact with the database and load views to render them to the client.
-
-    Create a controller using this template
-"""
 from system.core.controller import *
+import googlemaps
+from datetime import datetime
 
+# google api key DO NOT PUSH TO GITHUB
+gmaps = googlemaps.Client(key='AIzaSyCTcTq9pMo7BiQGeMYo64S_vElVFRoqVr4')
 
 class Welcome(Controller):
     def __init__(self, action):
@@ -86,9 +81,6 @@ class Welcome(Controller):
             return redirect('/')
 
 
-
-
-
     def logout(self):
         session.clear()
         return self.load_view('index.html')
@@ -102,7 +94,10 @@ class Welcome(Controller):
             flash("You must first log in to access the site")
             return redirect('/')
         else:
-            return self.load_view('dashboard.html')
+            allParticipants = self.models['WelcomeModel'].getAllUsers()
+
+            return self.load_view('dashboard.html', allParticipants=allParticipants)
+
 
     def viewmilestraveled(self):
         # redirect user to login if session doesnt exist
@@ -157,3 +152,51 @@ class Welcome(Controller):
                 if element not in pruned_places_visited:
                     pruned_places_visited.append(element)
             return self.load_view('milestraveled.html', milestraveled = milestraveled, pruned_places_visited=pruned_places_visited)
+
+
+    def createtrip(self):
+
+        trip_details = request.form
+
+        origins = [trip_details['start_loc']]
+        destinations = [trip_details['end_loc']]
+        trip_api_info = gmaps.distance_matrix(origins, destinations, mode="driving",units="imperial")
+
+        self.models['WelcomeModel'].add_trip_m(trip_details, trip_api_info)
+        return self.load_view('ongoing.html')
+
+    def upload_photo(self):
+        file = request.files['photo']
+        if file:
+            # create random file name
+            if not os.path.exists('uploads'):
+                os.mkdir('uploads')
+            if not os.path.exists('uploads/photos'):
+                os.mkdir('uploads/photos')
+            salt = uuid.uuid4().hex
+            filename = hashlib.md5(str(uuid.uuid4()) + 'iclin294rit').hexdigest()
+            up_photo = os.path.join('uploads/photos', filename)
+            # file.save(os.path.join('uploads/', filename))
+            file.save(up_photo)
+            self.models['WelcomeModel'].up_photo_m(up_photo)
+            return self.load_view('ongoing.html')
+
+    def upload_video(self):
+        file = request.files['video']
+        if file:
+            # create random file name
+            if not os.path.exists('uploads'):
+                os.mkdir('uploads')
+            if not os.path.exists('uploads/videos'):
+                os.mkdir('uploads/videos')
+            salt = uuid.uuid4().hex
+            filename = hashlib.md5(str(uuid.uuid4()) + 'iclin294rit').hexdigest()
+            up_video = os.path.join('uploads/videos', filename)
+            print "VVVVVV", up_video
+            # file.save(os.path.join('uploads/', filename))
+            file.save(up_video)
+            self.models['WelcomeModel'].up_video_m(up_video)
+            return self.load_view('ongoing.html')
+
+    def add_trip(self):
+        pass
