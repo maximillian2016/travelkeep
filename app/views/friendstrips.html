@@ -62,15 +62,17 @@
 
           <table>
                   <tr>
+                    <td> Friend's name:</td>
                     <td> Trip name: </td>
                     <td> Trip's start date:</td>
                     <td> Trip's end date:</td>
-                    <td> Trip's rating:</td>
+                    <td> Trip's rating (1 to 5 stars):</td>
                     <td> Trip's destination:</td>
                   </tr>
 
-                    {%for element in friendstrips%}
+                    {% for element in friendstrips %}
                     <tr>
+                          <td> {{element['first_name']}} {{element['last_name']}}</td>
                           <td> {{element['name']}}</td>
                           <td> {{element['start_date']}}</td>
                           <td> {{element['end_date']}}</td>

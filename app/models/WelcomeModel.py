@@ -184,7 +184,14 @@ class WelcomeModel(Model):
     def getallfriends(self, user_id):
         query = "SELECT * from users LEFT join friends on users.id=friends.user_id LEFT join users as users2 on users2.id= friends.friend_id WHERE users.id =:user_id"
         data = { 'user_id': user_id}
-        return self.db.query_db(query, data)
+        list_friends= self.db.query_db(query, data)
+        if list_friends[0]['first_name'] == None:
+            num_friends=0
+        else:
+            num_friends=len(list_friends)
+        list_friends[0]['num_friends']=num_friends        
+        print "this is list_friends", list_friends 
+        return list_friends
 
     def getallusersexceptselfandfriends(self, user_id):
         query= "SELECT * from users where users.id <>:user_id"
@@ -217,18 +224,19 @@ class WelcomeModel(Model):
 
     def viewfriendstrips(self, data):
         print "data", data
-        query_friends = "SELECT users2.id from users LEFT join friends on users.id=friends.user_id LEFT join users as users2 on users2.id= friends.friend_id WHERE users.id =:user_id"
+        #query_friends = "SELECT users2.id from users LEFT join friends on users.id=friends.user_id LEFT join users as users2 on users2.id= friends.friend_id WHERE users.id =:user_id"
+        query_friends = "Select U.first_name, U.last_name, T.trip_miles, T.end_location, T.name, T.start_date, T.end_date, T.rating from friends F join participants P on P.user_id = F.friend_id join Trips T on T.id = P.trip_id join users U on U.id = F.friend_id where F.user_id =:user_id ORDER BY F.friend_id DESC"
         data = {'user_id': data['user_id']}
         query_friends=self.db.query_db(query_friends, data)
-        print query_friends, "this is query_friends"
-        print query_friends[0], "this is query_friends['id']"
-        query_trips = "SELECT * from trips join participants on participants.trip_id=trips.id WHERE participants.user_id =:friend_id"
+        print "this is query_friends", query_friends
+        #print query_friends[0], "this is query_friends['id']"
+        #query_trips = "SELECT * from trips join participants on participants.trip_id=trips.id WHERE participants.user_id =:friend_id"
 
-        data_trips ={ 'friend_id': query_friends[0]['id']}
+        #data_trips ={ 'friend_id': query_friends[0]['id']}
 
-        friends_trips=self.db.query_db(query_trips, data_trips)
-        print friends_trips, "this is friends_trips"
-        return friends_trips
+        #friends_trips=self.db.query_db(query_trips, data_trips)
+        #print friends_trips, "this is friends_trips"
+        return query_friends
 
     def getAllTrips(self):
         query = "SELECT * FROM trips ORDER BY start_date DESC"

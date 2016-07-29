@@ -58,6 +58,10 @@
         </div>
         <div class="col-md-10">
           <h1>Welcome, {{session['name']}}</h1>
+          {% if friends[0]['num_friends']==0: %}
+          <h2> You have not added any friends </h2>
+          {% endif %}
+          {% if friends[0]['num_friends']>0: %}
           <h2> You have the following friends:</h2>
           <table>
               		<tr>
@@ -66,11 +70,7 @@
               		</tr>
 
           	    		{% for element in friends %}
-                      {% if not friends %}
-                        <p>
-                          Sorry you do not have any friends :( !! You Suck! Stop being an asshole
-                        </p>
-                      {%else%}
+                        
               	    		<tr>
               	          		<td> {{element['first_name']}} {{element['last_name']}}</td>
               	          		<td>
@@ -78,8 +78,9 @@
               	    			 <input type =submit name='deletefromdb' value='REMOVE FROM FRIENDS'>
               	    			</form>
               	    		</tr>
-                      {% endif %}
+                      
           	        {%endfor%}
+                    {% endif %}
              </table>
 
              <h2> Add a new friend: </h2>
