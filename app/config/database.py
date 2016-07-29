@@ -19,19 +19,19 @@ class DevelopmentDBConfig(DBConfig):
     DB_PORT = 8889
     # """ unix_socket is used for connecting with MAMP. Take this out if you aren't using MAMP """
     DB_OPTIONS = {
-    #     'unix_socket': '/Applications/MAMP/tmp/mysql/mysql.sock'
+        'unix_socket': '/Applications/MAMP/tmp/mysql/mysql.sock'
     }
 
 """ Put Staging Specific Configurations here """
 class StagingDBConfig(DBConfig):
     DB_USERNAME = 'root'
     DB_PASSWORD = 'root'
-    DB_DATABASE_NAME = 'mydb'
+    DB_DATABASE_NAME = 'travelkeepdb'
     DB_HOST = 'localhost'
 
 """ Put Production Specific Configurations here """
 class ProductionDBConfig(DBConfig):
     DB_USERNAME = 'root'
     DB_PASSWORD = 'root'
-    DB_DATABASE_NAME = 'mydb'
+    DB_DATABASE_NAME = 'travelkeepdb'
     DB_HOST = 'localhost'

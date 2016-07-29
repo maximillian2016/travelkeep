@@ -1,3 +1,4 @@
+
 """
     Sample Model File
 
@@ -150,7 +151,8 @@ class WelcomeModel(Model):
             milesforeachmonth.append(0);
             i= i+1
         #SELECT * from trips join favorites on trips.id = favorites.trip_id join users on users.id=favorites.user_id where users.id =1#
-        totmilestraveled_query ="SELECT * from trips join favorites on trips.id = favorites.trip_id join users on users.id=favorites.user_id where users.id =:user_id and trips.start_date BETWEEN :startdate and :enddate AND trips.rating =:triprating"
+        #totmilestraveled_query ="SELECT * from trips join favorites on trips.id = favorites.trip_id join users on users.id=favorites.user_id where users.id =:user_id and trips.start_date BETWEEN :startdate and :enddate AND trips.rating =:triprating"
+        totmilestraveled_query ="SELECT * from trips join participants on participants.trip_id =trips.id join users on participants.user_id=users.id WHERE users.id =:user_id and trips.start_date BETWEEN :startdate and :enddate AND trips.rating =:triprating"
         totmilestraveled_data = {'startdate': trip_info['start_date'], 'enddate': trip_info['end_date'], 'triprating': trip_info['rating'], 'user_id': trip_info['user_id']}
         totmilestraveled = self.db.query_db(totmilestraveled_query, totmilestraveled_data)
         print "this is totmilestraveled", totmilestraveled
@@ -165,10 +167,10 @@ class WelcomeModel(Model):
 
     def placesvisited(self, trip_info):
         #SELECT * from trips join favorites on trips.id = favorites.trip_id join users on users.id=favorites.user_id where users.id =1#
-        placesvisited_query ="SELECT end_location from trips join favorites on trips.id = favorites.trip_id join users on users.id=favorites.user_id where users.id =:user_id and trips.start_date BETWEEN :startdate and :enddate AND trips.rating =:triprating"
+        #placesvisited_query ="SELECT end_location from trips join favorites on trips.id = favorites.trip_id join users on users.id=favorites.user_id where users.id =:user_id and trips.start_date BETWEEN :startdate and :enddate AND trips.rating =:triprating"
+        placesvisited_query="SELECT end_location from trips join participants on participants.trip_id=trips.id join users on participants.user_id=users.id WHERE users.id =:user_id and trips.start_date BETWEEN :startdate and :enddate AND trips.rating =:triprating"
         placesvisited_data = {'startdate': trip_info['start_date'], 'enddate': trip_info['end_date'], 'triprating': trip_info['rating'], 'user_id': trip_info['user_id']}
         placesvisited = self.db.query_db(placesvisited_query, placesvisited_data)
-        print "this is places visited", placesvisited
         return placesvisited
 
 
@@ -179,6 +181,57 @@ class WelcomeModel(Model):
       return self.db.query_db(query, data)
 
 
+   
+    def getallfriends(self, user_id):
+        query = "SELECT * from users LEFT join friends on users.id=friends.user_id LEFT join users as users2 on users2.id= friends.friend_id WHERE users.id =:user_id" 
+        data = { 'user_id': user_id}
+        return self.db.query_db(query, data)
+   
+    def getallusersexceptselfandfriends(self, user_id):
+        query= "SELECT * from users where users.id <>:user_id"
+        data = {'user_id': user_id}
+        usersbutself =self.db.query_db(query, data)
+        print "this is usersbutself", usersbutself
+        query2 = "SELECT * from users LEFT join friends on users.id=friends.user_id LEFT join users as users2 on users2.id= friends.friend_id WHERE users.id =:user_id" 
+        data2 = { 'user_id': user_id}
+        allfriends = self.db.query_db(query2, data2)
+        listallfriends =[]
+        for element in allfriends:
+            listallfriends.append(element['id'])
+        prunedusers =[]
+        for element in usersbutself:
+            if element['id'] not in listallfriends:
+                prunedusers.append(element)    
+        return prunedusers
+
+    def delete(self, data):
+        removefromdb_query="DELETE from friends WHERE user_id=:user_id and friend_id=:friend_id"
+        return self.db.query_db(removefromdb_query, data)
+
+    def add(self, data):
+        print "this is data", data
+        addtofriends_query="INSERT INTO friends (user_id, friend_id, created_at) VALUES (:user_id, :friend_id, NOW())"
+        query_data={ 'user_id': data['user_id'],
+                    'friend_id': data['friend_id']}
+        test = self.db.query_db(addtofriends_query, query_data)
+        return test
+
+    def viewfriendstrips(self, data):
+        print "data", data
+        query_friends = "SELECT users2.id from users LEFT join friends on users.id=friends.user_id LEFT join users as users2 on users2.id= friends.friend_id WHERE users.id =:user_id" 
+        data = {'user_id': data['user_id']}
+        query_friends=self.db.query_db(query_friends, data)
+        print query_friends, "this is query_friends"
+        print query_friends[0], "this is query_friends['id']"
+        query_trips = "SELECT * from trips join participants on participants.trip_id=trips.id WHERE participants.user_id =:friend_id"
+
+        data_trips ={ 'friend_id': query_friends[0]['id']}
+
+        friends_trips=self.db.query_db(query_trips, data_trips)
+        print friends_trips, "this is friends_trips"
+        return friends_trips
+
+
     def getAllTrips(self):
         query = "SELECT * FROM trips ORDER BY start_date DESC"
         return self.db.query_db(query)
@@ -187,3 +240,76 @@ class WelcomeModel(Model):
     def getAllParticipants(self):
         query = "SELECT p.*, u.first_name, u.last_name FROM participants p JOIN users u ON p.user_id = u.id"
         return self.db.query_db(query)
+
+    def getAllUsers(self):
+        query = "SELECT * FROM users"
+        return self.db.query_db(query)
+
+    def up_photo_m(self, up_photo):
+        add_query = "INSERT INTO photos_vids (photo, trip_id, user_id, created_at, updated_at) \
+        VALUES (:spec_photo, :spec_trip_id, :spec_user_id, NOW(), NOW())"
+        add_data = {
+        'spec_photo': up_photo,
+        'spec_trip_id': 1,
+        'spec_user_id': 1
+        }
+        self.db.query_db(add_query, add_data)
+        return
+
+    def up_video_m(self, up_video):
+            add_query = "INSERT INTO photos_vids (videos, trip_id, user_id, created_at, updated_at) \
+            VALUES (:spec_photo, :spec_trip_id, :spec_user_id, NOW(), NOW())"
+            add_data = {
+            'spec_photo': up_video,
+            'spec_trip_id': 1,
+            'spec_user_id': 1
+            }
+            self.db.query_db(add_query, add_data)
+            return
+
+    def add_trip_m(self, trip_details, trip_api_info):
+
+        miles = trip_api_info['rows'][0]['elements'][0]['distance']['text']
+        milesStr = miles.replace(' mi','')
+        milesInt = int(milesStr)
+
+        # create trip
+        ins_trip_query = "INSERT INTO trips (name, start_date, end_date, start_location, \
+        end_location, trip_miles) \
+        VALUES (:spec_name, :spec_start_date, :spec_end_date, :spec_start_location, \
+        :spec_end_location, :spec_trip_miles)"
+        ins_trip_data = {
+        'spec_name': trip_details['trip_name'],
+        'spec_start_date': trip_details['start_date'],
+        'spec_end_date': trip_details['end_date'],
+        'spec_start_location': trip_details['start_loc'],
+        'spec_end_location': trip_details['end_loc'],
+        'spec_trip_miles': milesInt
+        }
+
+        # newly created trip
+        tripid = self.db.query_db(ins_trip_query, ins_trip_data)
+
+        # automatically add to favorites
+        ins_trip_query2 = "INSERT INTO favorites (user_id, trip_id, \
+        created_at, updated_at) \
+        VALUES (:spec_user_id, :spec_trip_id, NOW(),NOW())"
+        ins_trip_data2 = {
+        'spec_user_id': 1,
+        'spec_trip_id': tripid
+        }
+
+        self.db.query_db(ins_trip_query2, ins_trip_data2)
+
+        # add participants of new trip
+        pStr = trip_details['participant']
+        pArr = pStr.split(',')
+
+        add_participant_query = "INSERT INTO participants (user_id, trip_id, created_at, updated_at) VALUES (:user_id, :trip_id, NOW(), NOW())"
+
+        for pId in pArr:
+            add_participant_data = {'user_id': pId, 'trip_id': tripid }
+            self.db.query_db(add_participant_query,add_participant_data)
+
+
+        return

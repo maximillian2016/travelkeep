@@ -1,6 +1,7 @@
 <html>
   <head>
     <link rel="stylesheet" href="/static/css/styles.css" type="text/css">
+    <script type="text/javascript" src="/static/js/fbsdk.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
@@ -44,28 +45,32 @@
       <div class="row">
         <div class="col-md-2 mainMenu">
           <ul class="nav nav-pills nav-stacked">
-            <li role="presentation"><a href="/dashboard">My dashboard</a></li>
-            <li role="presentation"><a href="/ongoingtrip">Current trip</a></li>
-            <li role="presentation"><a href="/dashboard">Start new trip</a></li>
-            <li role="presentation" class="active"><a href="/tripsbydate">Trips by date</a></li>
-            <li role="presentation"><a href="/favoritetrips">Favorite trips</a></li>
-            <li role="presentation"><a href="/milestraveled">Miles traveled</a></li>
-            <li role="presentation"><a href="/addfriend">Share with friends</a></li>
-            <li role="presentation"><a href="/viewfriendstrips">View friends trips</a></li>
+            <li role="presentation"><a href="#">Current trip</a></li>
+            <li role="presentation"><a href="#">Start new trip</a></li>
+            <li role="presentation" class="active"><a href="#">Trips by date</a></li>
+            <li role="presentation"><a href="#">Favorite trips</a></li>
+            <li role="presentation"><a href="#">Miles traveled</a></li>
+            <li role="presentation"><a href="#">Share with friends</a></li>
+            <li role="presentation"><a href="#">View friends trips</a></li>
           </ul>
         </div>
         <div class="col-md-10">
-            <h4> Enter a date range below and click "enter" to view miles traveled for a given date range</h4>
-            <form action='/calculatemilestraveled' method='post'>
-            	<label>Select trips ranging from</label><input type ='date' name ='startdate'>
-            	<label>To </label><input type ='date' name ='enddate'>
-              <label> Filter by trip rating: <label> <select name='rating'><option value ='1'>One Star</option> <option value ='2'>Two Stars</option><option value='3'>Three Stars</option><option value ='4'>Four Stars</option><option value='5'>Five Stars</option></select>
-            	<input class="btn" type='Submit' value='VIEW MILES TRAVELED'>
-
+          <p>You're currently in a trip from {{ session['start_loc'] }} to {{ session['end_loc'] }} </p>
+          <p>Estimated trip distance: {{ session['t_dist'] }}</p>
+          <p>Estimated Trip Time: {{ session['t_time'] }}</p>
+          <p>Trip participants</p>
+          <p>Places Visited: </p>
+          <br><br>
+            <form action="/upload/photo" method="post" enctype="multipart/form-data">
+              <input type="file" name="photo"><br /><br />
+              <input type="submit" value="Load a picture">
             </form>
-              <!--Div that will hold the pie chart-->
-             <div id="chart_div"></div>
-         </div>
+          <br><br>
+            <form action="/upload/video" method="post" enctype="multipart/form-data">
+              <input type="file" name="file"><br /><br />
+              <input type="submit" value="Load a video">
+            </form>
+        </div>  <!--end container 10 div -->
 
   </body>
 </html>
