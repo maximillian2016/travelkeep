@@ -16,7 +16,7 @@ import uuid
 import hashlib
 
 # google api key DO NOT PUSH TO GITHUB
-gmaps = googlemaps.Client(key='')
+gmaps = googlemaps.Client(key='AIzaSyAecQw1Rhoc_JeqajGy7G3VUrkgFVKlOQ4')
 
 class Welcome(Controller):
     def __init__(self, action):
@@ -213,6 +213,14 @@ class Welcome(Controller):
         return redirect('/ongoingtrip')
 
     def upload_photo(self):
+        sess_id = session['id']
+        info_l = self.models['WelcomeModel'].ongoing_m(sess_id)
+        startl = info_l[0][0]['start_location']
+        endl = info_l[0][0]['end_location']
+        trip_api_info = gmaps.distance_matrix(startl, endl, units='imperial')
+        t_dist = trip_api_info['rows'][0]['elements'][0]['distance']['text']
+        t_time = trip_api_info['rows'][0]['elements'][0]['duration']['text']
+
         file = request.files['photo']
         if file:
             # create random file name
@@ -226,10 +234,20 @@ class Welcome(Controller):
             # file.save(os.path.join('uploads/', filename))
             file.save(up_photo)
             self.models['WelcomeModel'].up_photo_m(up_photo)
-            return self.load_view('ongoing.html')
+            # return self.load_view('ongoing.html')
+            return self.load_view('ongoing.html', info_l=info_l,t_dist=t_dist,t_time=t_time)
+
 
     def upload_video(self):
+        sess_id = session['id']
+        info_l = self.models['WelcomeModel'].ongoing_m(sess_id)
+        startl = info_l[0][0]['start_location']
+        endl = info_l[0][0]['end_location']
+        trip_api_info = gmaps.distance_matrix(startl, endl, units='imperial')
+        t_dist = trip_api_info['rows'][0]['elements'][0]['distance']['text']
+        t_time = trip_api_info['rows'][0]['elements'][0]['duration']['text']
         file = request.files['video']
+
         if file:
             # create random file name
             if not os.path.exists('uploads'):
@@ -243,9 +261,25 @@ class Welcome(Controller):
             # file.save(os.path.join('uploads/', filename))
             file.save(up_video)
             self.models['WelcomeModel'].up_video_m(up_video)
-            return self.load_view('ongoing.html')
+            # return self.load_view('ongoing.html')
+            return self.load_view('ongoing.html', info_l=info_l,t_dist=t_dist,t_time=t_time)
 
     def ongoing(self):
+        sess_id = session['id']
+        info_l = self.models['WelcomeModel'].ongoing_m(sess_id)
+        startl = info_l[0][0]['start_location']
+        endl = info_l[0][0]['end_location']
+        # session['startl'] = info_l[0][0]['start_location']
+        # session['endl'] = info_l[0][0]['end_location']
+        trip_api_info = gmaps.distance_matrix(startl, endl, units='imperial')
+        t_dist = trip_api_info['rows'][0]['elements'][0]['distance']['text']
+        t_time = trip_api_info['rows'][0]['elements'][0]['duration']['text']
+        # session['t_dist'] = trip_api_info['rows'][0]['elements'][0]['distance']['text']
+        # session['t_time'] = trip_api_info['rows'][0]['elements'][0]['duration']['text']
+        return self.load_view('ongoing.html', info_l=info_l,t_dist=t_dist,t_time=t_time)
+
+    def complete_trip(self):
+        # ongoing(self)
         sess_id = session['id']
         info_l = self.models['WelcomeModel'].ongoing_m(sess_id)
         startl = info_l[0][0]['start_location']
@@ -254,3 +288,4 @@ class Welcome(Controller):
         t_dist = trip_api_info['rows'][0]['elements'][0]['distance']['text']
         t_time = trip_api_info['rows'][0]['elements'][0]['duration']['text']
         return self.load_view('ongoing.html', info_l=info_l,t_dist=t_dist,t_time=t_time)
+        # return self.load_view('ongoing.html')
