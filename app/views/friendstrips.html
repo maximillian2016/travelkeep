@@ -60,14 +60,14 @@
 
           <h1>Welcome, {{session['name']}}</h1>
 
-          <table>
+          <table class="table table-striped">
                   <tr>
-                    <td> Friend's name:</td>
-                    <td> Trip name: </td>
-                    <td> Trip's start date:</td>
-                    <td> Trip's end date:</td>
-                    <td> Trip's rating (1 to 5 stars):</td>
-                    <td> Trip's destination:</td>
+                    <th> Friend's name:</th>
+                    <th> Trip name: </th>
+                    <th> Trip's start date:</th>
+                    <th> Trip's end date:</th>
+                    <th> Trip's rating (1 to 5 stars):</th>
+                    <th> Trip's destination:</th>
                   </tr>
 
                     {% for element in friendstrips %}

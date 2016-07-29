@@ -61,25 +61,26 @@
 <!---->
 	</div>
 
-	<div style="border: 2px solid red; width:500px; height:800px; display:inline-block; vertical-align: top; text-align:center; padding:10px; border-radius:5px;	  display:relative;">
+	<div class="col-md-10">
 	<form action="/Welcome/get_query" method='POST' >
 	<input type="hidden" name="get_fav_textbox"></input>
 	<input class="max" type="submit" name = "button" value="Favorite Trips"  style="background-color:#068266 !important; color:white; border-radius:5px; width:100px; height:50px;"></input>
 	</form>
-	{%for i in miles%}
-    <a href="/welcome/detailed_trip_routing/{{i['name']}}"><h3>{{i['name']}}</h3></a>
-	<p>Start:{{i['start_date']}}</p>
-	<p>End:{{i['end_date']}}</p>
-<!--Participants???-->
-	<p>Trip rating: {{i['rating']}}</p>
-	<p></p>
-	<p></p>
-	{%endfor%}
-	</div>
+
+  {%for i in miles%}
+    <div style="text-align:center; padding:15px; margin-left:10px; float:left; margin-bottom:15px; background-color:whitesmoke;">
+      <a href="/welcome/detailed_trip_routing/{{i['name']}}"><h3>{{i['name']}}</h3></a>
+    	<p>Start:{{i['start_date']}}</p>
+    	<p>End:{{i['end_date']}}</p>
+    <!--Participants???-->
+    	<p>Trip rating: {{i['rating']}}</p>
+    </div>
+  {%endfor%}
 
 
 
 
+  	</div>
 
   </body>
 </html>

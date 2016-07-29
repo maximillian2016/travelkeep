@@ -65,13 +65,10 @@
                 <br>Starting Date: <input type="date" name="start_date">
               <br>Select Ending Point: <input type="text" name="end_loc">
                 <br>End Date: <input type="date" name="end_date">
-              <br>Add Participant: <input type="text" name="participant" id="participantInput" value="{{session['id']}}" readonly>
+              <input type="hidden" name="participant" id="participantInput" value="{{session['id']}}" readonly>
                 <br>
                 <input type="submit" value="Start Trip Now">
           </form>
-          <br>
-          <input id="loc_search" type="text" name="search" placeholder="search places of interest near your location">
-          <a href=""><button>Search Now</button></a>
           </div>
         </div>  <!--end container 10 div -->
         <div class="col-md-4">
