@@ -49,22 +49,23 @@
       <div class="row">
         <div class="col-md-2 mainMenu">
           <ul class="nav nav-pills nav-stacked">
-            <li role="presentation"><a href="#">Current trip</a></li>
-            <li role="presentation"><a href="#">Start new trip</a></li>
-            <li role="presentation" class="active"><a href="#">Trips by date</a></li>
-            <li role="presentation"><a href="/get/fav/trips">Favorite trips</a></li>
-            <li role="presentation"><a href="#">Miles traveled</a></li>
-            <li role="presentation"><a href="#">Share with friends</a></li>
-            <li role="presentation"><a href="#">View friends trips</a></li>
+            <li role="presentation"><a href="/dashboard">My dashboard</a></li>
+            <li role="presentation"><a href="/ongoingtrip">Current trip</a></li>
+            <li role="presentation"><a href="/dashboard">Start new trip</a></li>
+            <li role="presentation"><a href="/tripsbydate">Trips by date</a></li>
+            <li role="presentation" class="active"><a href="/favoritetrips">Favorite trips</a></li>
+            <li role="presentation"><a href="/milestraveled">Miles traveled</a></li>
+            <li role="presentation"><a href="/addfriend">Share with friends</a></li>
+            <li role="presentation"><a href="/viewfriendstrips">View friends trips</a></li>
           </ul>
 <!---->
 	</div>
-	
+
 	<div style="border: 2px solid red; width:500px; height:800px; display:inline-block; vertical-align: top; text-align:center; padding:10px; border-radius:5px;	  display:relative;">
 	<form action="/Welcome/get_query" method='POST' >
 	<input type="hidden" name="get_fav_textbox"></input>
 	<input class="max" type="submit" name = "button" value="Favorite Trips"  style="background-color:#068266 !important; color:white; border-radius:5px; width:100px; height:50px;"></input>
-	</form>	
+	</form>
 	{%for i in miles%}
     <a href="/welcome/detailed_trip_routing/{{i['name']}}"><h3>{{i['name']}}</h3></a>
 	<p>Start:{{i['start_date']}}</p>
@@ -74,11 +75,11 @@
 	<p></p>
 	<p></p>
 	{%endfor%}
-	</div>	
-	
-		
+	</div>
 
-	
-	
+
+
+
+
   </body>
 </html>

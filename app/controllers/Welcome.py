@@ -7,8 +7,13 @@
     Create a controller using this template
 """
 from system.core.controller import *
-import googlemaps
 from datetime import datetime
+from flask import Flask, request, redirect, render_template, session, flash, url_for
+import re
+import os,binascii
+import googlemaps
+import uuid
+import hashlib
 
 # google api key DO NOT PUSH TO GITHUB
 gmaps = googlemaps.Client(key='')
@@ -22,7 +27,7 @@ class Welcome(Controller):
 # login controllers
     def index(self):
         return self.load_view('index.html')
-   
+
     def logincheck(self):
         user_info = {
              "email" : request.form['loginemail'],
@@ -128,7 +133,7 @@ class Welcome(Controller):
 
             return self.load_view('tripsbydate.html', allTrips=allTrips, allParticipants=allParticipants)
 
-   
+
     def addfriend(self):
         user_id = session['id']
         friends = self.models['WelcomeModel'].getallfriends(user_id)
@@ -138,27 +143,27 @@ class Welcome(Controller):
             if element['id'] == 'None':
                 length=0
             else:
-                length=1    
+                length=1
         print length, "this is the length"
         users = self.models['WelcomeModel'].getallusersexceptselfandfriends(user_id)
-        return self.load_view('addfriend.html', friends=friends, users=users, length=length) 
+        return self.load_view('addfriend.html', friends=friends, users=users, length=length)
 
     def deletefriend(self, friend_id, method ='post'):
         data ={'user_id': session['id'],
         'friend_id': friend_id }
         self.models['WelcomeModel'].delete(data)
-        return redirect('/addfriend') 
+        return redirect('/addfriend')
 
     def add(self, friend_id, method='post'):
         data = {'user_id': session['id'],
-                'friend_id': int(friend_id)} 
+                'friend_id': int(friend_id)}
         self.models['WelcomeModel'].add(data)
-        return redirect('/addfriend') 
+        return redirect('/addfriend')
 
     def viewfriendstrips(self, method='get'):
         data = {'user_id': session['id']}
         friendstrips=self.models['WelcomeModel'].viewfriendstrips(data)
-        return self.load_view('friendstrips.html', friendstrips=friendstrips)      
+        return self.load_view('friendstrips.html', friendstrips=friendstrips)
 
 
 
@@ -205,7 +210,7 @@ class Welcome(Controller):
         trip_api_info = gmaps.distance_matrix(origins, destinations, mode="driving",units="imperial")
 
         self.models['WelcomeModel'].add_trip_m(trip_details, trip_api_info)
-        return self.load_view('ongoing.html')
+        return redirect('/ongoingtrip')
 
     def upload_photo(self):
         file = request.files['photo']
@@ -242,14 +247,10 @@ class Welcome(Controller):
 
     def ongoing(self):
         sess_id = session['id']
-        gmaps = googlemaps.Client(key='')
         info_l = self.models['WelcomeModel'].ongoing_m(sess_id)
-        # print "LLLLLL", info_l[1][0]['first_name']
         startl = info_l[0][0]['start_location']
         endl = info_l[0][0]['end_location']
         trip_api_info = gmaps.distance_matrix(startl, endl, units='imperial')
         t_dist = trip_api_info['rows'][0]['elements'][0]['distance']['text']
         t_time = trip_api_info['rows'][0]['elements'][0]['duration']['text']
         return self.load_view('ongoing.html', info_l=info_l,t_dist=t_dist,t_time=t_time)
-
-   

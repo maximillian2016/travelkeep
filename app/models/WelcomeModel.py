@@ -180,18 +180,18 @@ class WelcomeModel(Model):
       data = { 'user_id': user_id}
       return self.db.query_db(query, data)
 
-   
+
     def getallfriends(self, user_id):
-        query = "SELECT * from users LEFT join friends on users.id=friends.user_id LEFT join users as users2 on users2.id= friends.friend_id WHERE users.id =:user_id" 
+        query = "SELECT * from users LEFT join friends on users.id=friends.user_id LEFT join users as users2 on users2.id= friends.friend_id WHERE users.id =:user_id"
         data = { 'user_id': user_id}
         return self.db.query_db(query, data)
-   
+
     def getallusersexceptselfandfriends(self, user_id):
         query= "SELECT * from users where users.id <>:user_id"
         data = {'user_id': user_id}
         usersbutself =self.db.query_db(query, data)
         print "this is usersbutself", usersbutself
-        query2 = "SELECT * from users LEFT join friends on users.id=friends.user_id LEFT join users as users2 on users2.id= friends.friend_id WHERE users.id =:user_id" 
+        query2 = "SELECT * from users LEFT join friends on users.id=friends.user_id LEFT join users as users2 on users2.id= friends.friend_id WHERE users.id =:user_id"
         data2 = { 'user_id': user_id}
         allfriends = self.db.query_db(query2, data2)
         listallfriends =[]
@@ -200,7 +200,7 @@ class WelcomeModel(Model):
         prunedusers =[]
         for element in usersbutself:
             if element['id'] not in listallfriends:
-                prunedusers.append(element)    
+                prunedusers.append(element)
         return prunedusers
 
     def delete(self, data):
@@ -217,7 +217,7 @@ class WelcomeModel(Model):
 
     def viewfriendstrips(self, data):
         print "data", data
-        query_friends = "SELECT users2.id from users LEFT join friends on users.id=friends.user_id LEFT join users as users2 on users2.id= friends.friend_id WHERE users.id =:user_id" 
+        query_friends = "SELECT users2.id from users LEFT join friends on users.id=friends.user_id LEFT join users as users2 on users2.id= friends.friend_id WHERE users.id =:user_id"
         data = {'user_id': data['user_id']}
         query_friends=self.db.query_db(query_friends, data)
         print query_friends, "this is query_friends"
@@ -242,27 +242,26 @@ class WelcomeModel(Model):
     def ongoing_m(self, sess_id):
         # print "SESSION ID", sess_id
         # get trip start and end location
-        query1 = "SELECT trips.start_location, trips.end_location, trips.id, users.first_name FROM trips \
-        LEFT JOIN favorites ON trips.id = favorites.trip_id \
-        LEFT JOIN users ON favorites.user_id=users.id \
-        WHERE users.id=:spec_user_id LIMIT 1"
-        data1 = {'spec_user_id': sess_id}
+        query1 = "SELECT t.start_location, t.end_location, t.id, u.first_name, u.last_name, t.trip_miles FROM trips t LEFT JOIN participants p ON t.id = p.trip_id \
+        LEFT JOIN users u ON u.id = p.user_id WHERE u.id = :sess_id ORDER BY t.id DESC LIMIT 1;"
+        data1 = {'sess_id': sess_id}
+
         trip_1 = self.db.query_db(query1, data1)
-        # print "TTTTT", trip_1[0]['id']
+
         # get list of participants
         query2 = "SELECT * FROM users LEFT JOIN participants \
         ON users.id=participants.user_id \
         LEFT JOIN trips on participants.trip_id=trips.id \
         WHERE trips.id=:spec_trip_id"
         data2 = {'spec_trip_id': trip_1[0]['id']}
-        # query2 = "SELECT * FROM users LEFT JOIN participants \
-        # ON users.id=participants.user_id \
-        # LEFT JOIN users AS users2 on participants.trip_id=users2.id \
-        # WHERE users.id=:spec_user_id"
-        # data2 = {'spec_user_id': sess_id}
-        part_l = self.db.query_db(query2, data2)
-        info_l = [trip_1,part_l]
-        return info_l
+
+        participants = self.db.query_db(query2, data2)
+
+        arrData = []
+        arrData.append(trip_1)
+        arrData.append(participants)
+
+        return arrData
 
     def getAllUsers(self):
         query = "SELECT * FROM users"

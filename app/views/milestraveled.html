@@ -83,9 +83,9 @@
             <li role="presentation"><a href="/dashboard">My dashboard</a></li>
             <li role="presentation"><a href="/ongoingtrip">Current trip</a></li>
             <li role="presentation"><a href="/dashboard">Start new trip</a></li>
-            <li role="presentation" class="active"><a href="/tripsbydate">Trips by date</a></li>
+            <li role="presentation"><a href="/tripsbydate">Trips by date</a></li>
             <li role="presentation"><a href="/favoritetrips">Favorite trips</a></li>
-            <li role="presentation"><a href="/milestraveled">Miles traveled</a></li>
+            <li role="presentation" class="active"><a href="/milestraveled">Miles traveled</a></li>
             <li role="presentation"><a href="/addfriend">Share with friends</a></li>
             <li role="presentation"><a href="/viewfriendstrips">View friends trips</a></li>
           </ul>
@@ -107,10 +107,12 @@
           <table id='placesvisited'>
                 <tr>
                   <td> Places visited: </td>
-                  {%for element in pruned_places_visited %}
-                    <td>{{element['end_location']}}</td>
-                    {%endfor%}
                 </tr>
+                {%for element in pruned_places_visited %}
+                <tr>
+                    <td>{{element['end_location']}}</td>
+                </tr>
+                {%endfor%}
               </table>
           </div>
         </div>
@@ -119,5 +121,3 @@
 
   </body>
 </html>
-
-<!--AIzaSyAfbP3QiaK7dEgNkMC34QqOWZ9VYovQDfI-->

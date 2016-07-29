@@ -83,40 +83,40 @@ class Welcome(Controller):
     def logout(self):
         session.clear()
         return self.load_view('index.html')
-		
-		
-		
+
+
+
 #===================================max=========================
 	def get_fav(self):
 		print "ace 1"
 		return self.load_view('myindex.html')
-		
+
 	def get_query(self):
 		query = "select trips.name, trips.start_date, trips.end_date, trips.rating, trips.trip_miles from users right join favorites on users.id = favorites.user_id right join trips on favorites.trip_id = trips.id where users.id = 1;"
 		x = self.db.query_db(query)
 		print x
 		return self.load_view('index.html',miles = x)
-		
+
 	def maps(self):
 		return self.load_view('mymap.html')
-		
+
 	def detailed_trip_routing(self):
 		return redirect('/detailed_trip')
-		
+
 	def detailed_trip(self):
 		query="select trips.name, trips.start_date, trips.end_date, trips.rating, trips.trip_miles,trips.start_location from users right join favorites on users.id = favorites.user_id right join trips on favorites.trip_id = trips.id where users.id = 1;"
 		#query = "select trips.name, trips.start_date, trips.end_date, trips.rating, trips.trip_miles from users right join favorites on users.id = favorites.user_id right join trips on favorites.trip_id = trips.id where users.id = 1;"
 		y = self.db.query_db(query)
 		return self.load_view('myviews.html',miles = y)
 
-	def get_place(self): 
+	def get_place(self):
 		city = request.form['user_input'].replace('  ', ' ')
 		url = "https://maps.googleapis.com/maps/api/place/textsearch/json?query=" + city +"&key=AIzaSyCt4WJW2ouRdf_RDR-FnJkcuhVlQrzsexw"
 		response = requests.get(url).content
 		x =  response
-			
+
 		return response
-		
+
 #=======================================
 
 # dashbnoard controllers
