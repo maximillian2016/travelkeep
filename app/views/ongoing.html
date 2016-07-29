@@ -54,44 +54,23 @@
             <li role="presentation"><a href="#">View friends trips</a></li>
           </ul>
         </div>
-        <div class="col-md-6">
-          <div id ="middle">
-          <h3>Ready to take a new trip?</h3>
+        <div class="col-md-10">
+          <p>You're currently in a trip from {{ session['start_loc'] }} to {{ session['end_loc'] }} </p>
+          <p>Estimated trip distance: {{ session['t_dist'] }}</p>
+          <p>Estimated Trip Time: {{ session['t_time'] }}</p>
+          <p>Trip participants</p>
+          <p>Places Visited: </p>
           <br><br>
-            <form action="/createtrip" method="post">
-              <br><label for="trip_name">Trip Name:<input type="text" name="trip_name" id="trip_name"></label>
-              <br>Select Starting Point: <input type="text" name="start_loc">
-                <br>Starting Date: <input type="date" name="start_date">
-              <br>Select Ending Point: <input type="text" name="end_loc">
-                <br>End Date: <input type="date" name="end_date">
-              <br>Add Participant: <input type="text" name="participant" id="participantInput" value="{{session['id']}}" readonly>
-                <br>
-                <input type="submit" value="Start Trip Now">
-          </form>
-          <br>
-          <input id="loc_search" type="text" name="search" placeholder="search places of interest near your location">
-          <a href=""><button>Search Now</button></a>
-          </div>
+            <form action="/upload/photo" method="post" enctype="multipart/form-data">
+              <input type="file" name="photo"><br /><br />
+              <input type="submit" value="Load a picture">
+            </form>
+          <br><br>
+            <form action="/upload/video" method="post" enctype="multipart/form-data">
+              <input type="file" name="file"><br /><br />
+              <input type="submit" value="Load a video">
+            </form>
         </div>  <!--end container 10 div -->
-        <div class="col-md-4">  
-          <div class="dropdown">
-              <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                Add Participant
-                <span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                {% for participant in allParticipants %}
-                  <li><a href="#" onclick="addParticipant({{participant['id']}});"><img src="{{participant['picture']}}" style="border: solid #0f866b 4px;border-radius: 30px;height: 50px;margin-left: 12px;" alt="" /> {{participant['first_name']}} {{participant['last_name']}}</a></li>
-                  <li role="separator" class="divider"></li>
-                {% endfor %}
-              </ul>
-            </div>
-        </div>
 
-        <script type="text/javascript">
-            function addParticipant(id){
-              $('#participantInput').val($('#participantInput').val() + ',' + id);
-            }
-        </script>
   </body>
 </html>
