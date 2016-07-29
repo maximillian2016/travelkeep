@@ -8,7 +8,7 @@
     Create a controller using this template
 """
 from system.core.controller import *
-
+import googlemaps
 
 class Welcome(Controller):
     def __init__(self, action):
@@ -157,3 +157,15 @@ class Welcome(Controller):
                 if element not in pruned_places_visited:
                     pruned_places_visited.append(element)
             return self.load_view('milestraveled.html', milestraveled = milestraveled, pruned_places_visited=pruned_places_visited)
+
+    def ongoing(self):
+        sess_id = session['id']
+        gmaps = googlemaps.Client(key='')
+        info_l = self.models['WelcomeModel'].ongoing_m(sess_id)
+        # print "LLLLLL", info_l[1][0]['first_name']
+        startl = info_l[0][0]['start_location']
+        endl = info_l[0][0]['end_location']
+        trip_api_info = gmaps.distance_matrix(startl, endl, units='imperial')
+        t_dist = trip_api_info['rows'][0]['elements'][0]['distance']['text']
+        t_time = trip_api_info['rows'][0]['elements'][0]['duration']['text']
+        return self.load_view('ongoing.html', info_l=info_l,t_dist=t_dist,t_time=t_time)

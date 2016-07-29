@@ -27,3 +27,7 @@ routes['GET']['/tripsbydate'] = 'Welcome#tripsbydate'
 routes['POST']['/fbcheck'] = 'Welcome#fbcheck'
 routes['GET']['/milestraveled']='Welcome#milestraveled'
 routes['POST']['/calculatemilestraveled']='Welcome#calculatemilestraveled'
+# Alex routes
+# routes['POST']['/ongoingtrip'] = 'Welcome#ongoing'
+routes['GET']['/ongoingtrip'] = 'Welcome#ongoing'
+routes['POST']['/submit_ongoing'] = 'Welcome#submit_ongoing'

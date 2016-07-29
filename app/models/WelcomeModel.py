@@ -187,3 +187,59 @@ class WelcomeModel(Model):
     def getAllParticipants(self):
         query = "SELECT p.*, u.first_name, u.last_name FROM participants p JOIN users u ON p.user_id = u.id"
         return self.db.query_db(query)
+
+    # def add_trip_m(self, trip_details, trip_mile):
+        # query = "SELECT * FROM users LEFT JOIN participants \
+        # ON users.id=participants.user_id \
+        # LEFT JOIN users AS users2 on participants.trip_id=users2.id \
+        # WHERE users.id=session['id']"
+        # data = {'spec_user_id': session['id']}
+        # user = self.db.query_db(query, data)
+
+        # ins_trip_query = "INSERT INTO trips (name, start_date, end_date, start_location, \
+        # end_location, trip_miles) \
+        # VALUES (:spec_name, :spec_start_date, :spec_end_date, :spec_start_location, \
+        # :spec_end_location, :spec_trip_miles)"
+        # ins_trip_data = {
+        # 'spec_name': trip_details['trip_name'],
+        # 'spec_start_date': trip_details['start_date'],
+        # 'spec_end_date': trip_details['end_date'],
+        # 'spec_start_location': trip_details['start_loc'],
+        # 'spec_end_location': trip_details['end_loc'],
+        # 'spec_trip_miles': trip_mile
+        # }
+        # tripid = self.db.query_db(ins_trip_query, ins_trip_data)
+        # ins_trip_query2 = "INSERT INTO favorites (user_id, trip_id, \
+        # created_at, updated_at) \
+        # VALUES (:spec_user_id, :spec_trip_id, NOW(),NOW())"
+        # ins_trip_data2 = {
+        # 'spec_user_id': session['id'],
+        # 'spec_trip_id': tripid
+        # }
+        # self.db.query_db(ins_trip_query2, ins_trip_data2)
+        # return
+
+    def ongoing_m(self, sess_id):
+        # print "SESSION ID", sess_id
+        # get trip start and end location
+        query1 = "SELECT trips.start_location, trips.end_location, trips.id, users.first_name FROM trips \
+        LEFT JOIN favorites ON trips.id = favorites.trip_id \
+        LEFT JOIN users ON favorites.user_id=users.id \
+        WHERE users.id=:spec_user_id LIMIT 1"
+        data1 = {'spec_user_id': sess_id}
+        trip_1 = self.db.query_db(query1, data1)
+        # print "TTTTT", trip_1[0]['id']
+        # get list of participants
+        query2 = "SELECT * FROM users LEFT JOIN participants \
+        ON users.id=participants.user_id \
+        LEFT JOIN trips on participants.trip_id=trips.id \
+        WHERE trips.id=:spec_trip_id"
+        data2 = {'spec_trip_id': trip_1[0]['id']}
+        # query2 = "SELECT * FROM users LEFT JOIN participants \
+        # ON users.id=participants.user_id \
+        # LEFT JOIN users AS users2 on participants.trip_id=users2.id \
+        # WHERE users.id=:spec_user_id"
+        # data2 = {'spec_user_id': sess_id}
+        part_l = self.db.query_db(query2, data2)
+        info_l = [trip_1,part_l]
+        return info_l
