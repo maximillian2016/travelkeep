@@ -157,3 +157,39 @@ class Welcome(Controller):
                 if element not in pruned_places_visited:
                     pruned_places_visited.append(element)
             return self.load_view('milestraveled.html', milestraveled = milestraveled, pruned_places_visited=pruned_places_visited)
+    
+    def addfriend(self):
+        user_id = session['id']
+        friends = self.models['WelcomeModel'].getallfriends(user_id)
+        print "This are our friends", friends
+        length=1
+        for element in friends:
+            if element['id'] == 'None':
+                length=0
+            else:
+                length=1    
+        print length, "this is the length"
+        users = self.models['WelcomeModel'].getallusersexceptselfandfriends(user_id)
+        return self.load_view('addfriend.html', friends=friends, users=users, length=length) 
+
+    def deletefriend(self, friend_id, method ='post'):
+        data ={'user_id': session['id'],
+        'friend_id': friend_id }
+        self.models['WelcomeModel'].delete(data)
+        return redirect('/addfriend') 
+
+    def add(self, friend_id, method='post'):
+        data = {'user_id': session['id'],
+                'friend_id': int(friend_id)} 
+        self.models['WelcomeModel'].add(data)
+        return redirect('/addfriend') 
+
+    def viewfriendstrips(self, method='get'):
+        data = {'user_id': session['id']}
+        friendstrips=self.models['WelcomeModel'].viewfriendstrips(data)
+        return self.load_view('friendstrips.html', friendstrips=friendstrips)      
+
+
+
+                   
+    

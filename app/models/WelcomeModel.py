@@ -1,3 +1,4 @@
+
 """
     Sample Model File
 
@@ -150,7 +151,8 @@ class WelcomeModel(Model):
             milesforeachmonth.append(0);
             i= i+1
         #SELECT * from trips join favorites on trips.id = favorites.trip_id join users on users.id=favorites.user_id where users.id =1#
-        totmilestraveled_query ="SELECT * from trips join favorites on trips.id = favorites.trip_id join users on users.id=favorites.user_id where users.id =:user_id and trips.start_date BETWEEN :startdate and :enddate AND trips.rating =:triprating"
+        #totmilestraveled_query ="SELECT * from trips join favorites on trips.id = favorites.trip_id join users on users.id=favorites.user_id where users.id =:user_id and trips.start_date BETWEEN :startdate and :enddate AND trips.rating =:triprating"
+        totmilestraveled_query ="SELECT * from trips join participants on participants.trip_id =trips.id join users on participants.user_id=users.id WHERE users.id =:user_id and trips.start_date BETWEEN :startdate and :enddate AND trips.rating =:triprating"
         totmilestraveled_data = {'startdate': trip_info['start_date'], 'enddate': trip_info['end_date'], 'triprating': trip_info['rating'], 'user_id': trip_info['user_id']}
         totmilestraveled = self.db.query_db(totmilestraveled_query, totmilestraveled_data)
         print "this is totmilestraveled", totmilestraveled
@@ -165,10 +167,10 @@ class WelcomeModel(Model):
 
     def placesvisited(self, trip_info):
         #SELECT * from trips join favorites on trips.id = favorites.trip_id join users on users.id=favorites.user_id where users.id =1#
-        placesvisited_query ="SELECT end_location from trips join favorites on trips.id = favorites.trip_id join users on users.id=favorites.user_id where users.id =:user_id and trips.start_date BETWEEN :startdate and :enddate AND trips.rating =:triprating"
+        #placesvisited_query ="SELECT end_location from trips join favorites on trips.id = favorites.trip_id join users on users.id=favorites.user_id where users.id =:user_id and trips.start_date BETWEEN :startdate and :enddate AND trips.rating =:triprating"
+        placesvisited_query="SELECT end_location from trips join participants on participants.trip_id=trips.id join users on participants.user_id=users.id WHERE users.id =:user_id and trips.start_date BETWEEN :startdate and :enddate AND trips.rating =:triprating"
         placesvisited_data = {'startdate': trip_info['start_date'], 'enddate': trip_info['end_date'], 'triprating': trip_info['rating'], 'user_id': trip_info['user_id']}
         placesvisited = self.db.query_db(placesvisited_query, placesvisited_data)
-        print "this is places visited", placesvisited
         return placesvisited
 
 
@@ -187,3 +189,58 @@ class WelcomeModel(Model):
     def getAllParticipants(self):
         query = "SELECT p.*, u.first_name, u.last_name FROM participants p JOIN users u ON p.user_id = u.id"
         return self.db.query_db(query)
+    def getallfriends(self, user_id):
+        query = "SELECT * from users LEFT join friends on users.id=friends.user_id LEFT join users as users2 on users2.id= friends.friend_id WHERE users.id =:user_id" 
+        data = { 'user_id': user_id}
+        return self.db.query_db(query, data)
+    def getallusersexceptselfandfriends(self, user_id):
+        query= "SELECT * from users where users.id <>:user_id"
+        data = {'user_id': user_id}
+        usersbutself =self.db.query_db(query, data)
+        print "this is usersbutself", usersbutself
+        query2 = "SELECT * from users LEFT join friends on users.id=friends.user_id LEFT join users as users2 on users2.id= friends.friend_id WHERE users.id =:user_id" 
+        data2 = { 'user_id': user_id}
+        allfriends = self.db.query_db(query2, data2)
+        listallfriends =[]
+        for element in allfriends:
+            listallfriends.append(element['id'])
+        prunedusers =[]
+        for element in usersbutself:
+            if element['id'] not in listallfriends:
+                prunedusers.append(element)    
+        return prunedusers
+
+    def delete(self, data):
+        removefromdb_query="DELETE from friends WHERE user_id=:user_id and friend_id=:friend_id"
+        return self.db.query_db(removefromdb_query, data)
+
+    def add(self, data):
+        print "this is data", data
+        addtofriends_query="INSERT INTO friends (user_id, friend_id, created_at) VALUES (:user_id, :friend_id, NOW())"
+        query_data={ 'user_id': data['user_id'],
+                    'friend_id': data['friend_id']}
+        test = self.db.query_db(addtofriends_query, query_data)
+        return test
+
+    def viewfriendstrips(self, data):
+        print "data", data
+        query_friends = "SELECT users2.id from users LEFT join friends on users.id=friends.user_id LEFT join users as users2 on users2.id= friends.friend_id WHERE users.id =:user_id" 
+        data = {'user_id': data['user_id']}
+        query_friends=self.db.query_db(query_friends, data)
+        print query_friends, "this is query_friends"
+        print query_friends[0], "this is query_friends['id']"
+        query_trips = "SELECT * from trips join participants on participants.trip_id=trips.id WHERE participants.user_id =:friend_id"
+
+        data_trips ={ 'friend_id': query_friends[0]['id']}
+
+        friends_trips=self.db.query_db(query_trips, data_trips)
+        print friends_trips, "this is friends_trips"
+        return friends_trips
+
+
+
+
+
+
+
+
