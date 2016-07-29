@@ -43,3 +43,5 @@ routes['POST']['/createtrip'] = 'Welcome#createtrip'
 routes['POST']['/upload/photo'] = 'Welcome#upload_photo'
 routes['POST']['/upload/video'] = 'Welcome#upload_video'
 routes['POST']['/addtrip'] = 'Welcome#add_trip'
+routes['POST']['/completetrip'] = 'Welcome#complete_trip'
+

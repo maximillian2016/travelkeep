@@ -294,7 +294,6 @@ class WelcomeModel(Model):
         miles = trip_api_info['rows'][0]['elements'][0]['distance']['text']
         milesStr = miles.replace(' mi','')
         milesInt = int(milesStr)
-
         # create trip
         ins_trip_query = "INSERT INTO trips (name, start_date, end_date, start_location, \
         end_location, trip_miles) \
@@ -335,3 +334,6 @@ class WelcomeModel(Model):
 
 
         return
+
+        def complete_trip_m(self, trip_details, trip_api_info):
+            pass
