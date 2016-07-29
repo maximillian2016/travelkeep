@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+
+<html>
+<h1>Welcome, {{session['name']}}</h1>
+
+<table>
+        <tr> 
+          <td> Trip name: </td>
+          <td> Trip's start date:</td>
+          <td> Trip's end date:</td>
+          <td> Trip's rating:</td>
+          <td> Trip's destination:</td>
+        </tr>
+      
+          {%for element in friendstrips%}
+          <tr> 
+                <td> {{element['name']}}</td>
+                <td> {{element['start_date']}}</td>
+                <td> {{element['end_date']}}</td>
+                <td> {{element['rating']}}</td>
+                <td>{{element['end_location']}}</td>
+                 
+          </tr>
+              {%endfor%}
+   </table>
+ 
+
+</html>

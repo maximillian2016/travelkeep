@@ -32,11 +32,66 @@
       </div>
     </nav>
     <!-- end Nav Bar  -->
- <h1>Welcome, {{session['name']}}</h1>
-     <ul>
-  		<li><a href="/dashboard"> My dashboard</a></li>
-  		<li><a href="/tripsbydate">Trips by date</a></li>
-  		<li><a href="/milestraveled">Miles traveled</a></li>
-	</ul>
+    <!-- Right vertical menu nav -->
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-10">
+          <h3>Welcome {{session['name']}}!</h3>
+        </div>
+        <div class="col-md-2">
+          <!-- cal stuff here -->
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-2 mainMenu">
+          <ul class="nav nav-pills nav-stacked">
+            <li role="presentation"><a href="#">Current trip</a></li>
+            <li role="presentation"><a href="#">Start new trip</a></li>
+            <li role="presentation" class="active"><a href="#">Trips by date</a></li>
+            <li role="presentation"><a href="#">Favorite trips</a></li>
+            <li role="presentation"><a href="#">Miles traveled</a></li>
+            <li role="presentation"><a href="#">Share with friends</a></li>
+            <li role="presentation"><a href="#">View friends trips</a></li>
+          </ul>
+        </div>
+        <div class="col-md-6">
+          <div id ="middle">
+          <h3>Ready to take a new trip?</h3>
+          <br><br>
+            <form action="/createtrip" method="post">
+              <br><label for="trip_name">Trip Name:<input type="text" name="trip_name" id="trip_name"></label>
+              <br>Select Starting Point: <input type="text" name="start_loc">
+                <br>Starting Date: <input type="date" name="start_date">
+              <br>Select Ending Point: <input type="text" name="end_loc">
+                <br>End Date: <input type="date" name="end_date">
+              <br>Add Participant: <input type="text" name="participant" id="participantInput" value="{{session['id']}}" readonly>
+                <br>
+                <input type="submit" value="Start Trip Now">
+          </form>
+          <br>
+          <input id="loc_search" type="text" name="search" placeholder="search places of interest near your location">
+          <a href=""><button>Search Now</button></a>
+          </div>
+        </div>  <!--end container 10 div -->
+        <div class="col-md-4">  
+          <div class="dropdown">
+              <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                Add Participant
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                {% for participant in allParticipants %}
+                  <li><a href="#" onclick="addParticipant({{participant['id']}});"><img src="{{participant['picture']}}" style="border: solid #0f866b 4px;border-radius: 30px;height: 50px;margin-left: 12px;" alt="" /> {{participant['first_name']}} {{participant['last_name']}}</a></li>
+                  <li role="separator" class="divider"></li>
+                {% endfor %}
+              </ul>
+            </div>
+        </div>
+
+        <script type="text/javascript">
+            function addParticipant(id){
+              $('#participantInput').val($('#participantInput').val() + ',' + id);
+            }
+        </script>
   </body>
 </html>

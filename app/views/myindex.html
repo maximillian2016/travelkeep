@@ -4,6 +4,11 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <link href="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/css/datepicker.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="/static/css/bootstrap-rating.css" type="text/css">
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js"></script>
+      <script src="/static/js/bootstrap-rating.min.js"></script>
+      <script type="text/javascript" src="/static/js/fbsdk.js"></script>
   </head>
   <body>
     <!-- Nav Bar -->
@@ -44,28 +49,36 @@
       <div class="row">
         <div class="col-md-2 mainMenu">
           <ul class="nav nav-pills nav-stacked">
-            <li role="presentation"><a href="/dashboard">My dashboard</a></li>
-            <li role="presentation"><a href="/ongoingtrip">Current trip</a></li>
-            <li role="presentation"><a href="/dashboard">Start new trip</a></li>
-            <li role="presentation" class="active"><a href="/tripsbydate">Trips by date</a></li>
-            <li role="presentation"><a href="/favoritetrips">Favorite trips</a></li>
-            <li role="presentation"><a href="/milestraveled">Miles traveled</a></li>
-            <li role="presentation"><a href="/addfriend">Share with friends</a></li>
-            <li role="presentation"><a href="/viewfriendstrips">View friends trips</a></li>
+            <li role="presentation"><a href="#">Current trip</a></li>
+            <li role="presentation"><a href="#">Start new trip</a></li>
+            <li role="presentation" class="active"><a href="#">Trips by date</a></li>
+            <li role="presentation"><a href="/get/fav/trips">Favorite trips</a></li>
+            <li role="presentation"><a href="#">Miles traveled</a></li>
+            <li role="presentation"><a href="#">Share with friends</a></li>
+            <li role="presentation"><a href="#">View friends trips</a></li>
           </ul>
-        </div>
-        <div class="col-md-10">
-            <h4> Enter a date range below and click "enter" to view miles traveled for a given date range</h4>
-            <form action='/calculatemilestraveled' method='post'>
-            	<label>Select trips ranging from</label><input type ='date' name ='startdate'>
-            	<label>To </label><input type ='date' name ='enddate'>
-              <label> Filter by trip rating: <label> <select name='rating'><option value ='1'>One Star</option> <option value ='2'>Two Stars</option><option value='3'>Three Stars</option><option value ='4'>Four Stars</option><option value='5'>Five Stars</option></select>
-            	<input class="btn" type='Submit' value='VIEW MILES TRAVELED'>
+<!---->
+	</div>
+	
+	<div style="border: 2px solid red; width:500px; height:800px; display:inline-block; vertical-align: top; text-align:center; padding:10px; border-radius:5px;	  display:relative;">
+	<form action="/Welcome/get_query" method='POST' >
+	<input type="hidden" name="get_fav_textbox"></input>
+	<input class="max" type="submit" name = "button" value="Favorite Trips"  style="background-color:#068266 !important; color:white; border-radius:5px; width:100px; height:50px;"></input>
+	</form>	
+	{%for i in miles%}
+    <a href="/welcome/detailed_trip_routing/{{i['name']}}"><h3>{{i['name']}}</h3></a>
+	<p>Start:{{i['start_date']}}</p>
+	<p>End:{{i['end_date']}}</p>
+<!--Participants???-->
+	<p>Trip rating: {{i['rating']}}</p>
+	<p></p>
+	<p></p>
+	{%endfor%}
+	</div>	
+	
+		
 
-            </form>
-              <!--Div that will hold the pie chart-->
-             <div id="chart_div"></div>
-         </div>
-
+	
+	
   </body>
 </html>

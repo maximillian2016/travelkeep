@@ -1,17 +1,5 @@
-"""
-    Sample Controller File
-
-    A Controller should be in charge of responding to a request.
-    Load models to interact with the database and load views to render them to the client.
-
-    Create a controller using this template
-"""
 from system.core.controller import *
-import googlemaps
-from datetime import datetime
 
-# google api key DO NOT PUSH TO GITHUB
-gmaps = googlemaps.Client(key='')
 
 class Welcome(Controller):
     def __init__(self, action):
@@ -22,7 +10,6 @@ class Welcome(Controller):
 # login controllers
     def index(self):
         return self.load_view('index.html')
-   
     def logincheck(self):
         user_info = {
              "email" : request.form['loginemail'],
@@ -90,12 +77,49 @@ class Welcome(Controller):
             return redirect('/')
 
 
+
+
+
     def logout(self):
         session.clear()
         return self.load_view('index.html')
+		
+		
+		
+#===================================max=========================
+	def get_fav(self):
+		print "ace 1"
+		return self.load_view('myindex.html')
+		
+	def get_query(self):
+		query = "select trips.name, trips.start_date, trips.end_date, trips.rating, trips.trip_miles from users right join favorites on users.id = favorites.user_id right join trips on favorites.trip_id = trips.id where users.id = 1;"
+		x = self.db.query_db(query)
+		print x
+		return self.load_view('index.html',miles = x)
+		
+	def maps(self):
+		return self.load_view('mymap.html')
+		
+	def detailed_trip_routing(self):
+		return redirect('/detailed_trip')
+		
+	def detailed_trip(self):
+		query="select trips.name, trips.start_date, trips.end_date, trips.rating, trips.trip_miles,trips.start_location from users right join favorites on users.id = favorites.user_id right join trips on favorites.trip_id = trips.id where users.id = 1;"
+		#query = "select trips.name, trips.start_date, trips.end_date, trips.rating, trips.trip_miles from users right join favorites on users.id = favorites.user_id right join trips on favorites.trip_id = trips.id where users.id = 1;"
+		y = self.db.query_db(query)
+		return self.load_view('myviews.html',miles = y)
 
+	def get_place(self): 
+		city = request.form['user_input'].replace('  ', ' ')
+		url = "https://maps.googleapis.com/maps/api/place/textsearch/json?query=" + city +"&key=AIzaSyCt4WJW2ouRdf_RDR-FnJkcuhVlQrzsexw"
+		response = requests.get(url).content
+		x =  response
+			
+		return response
+		
+#=======================================
 
-    # dashbnoard controllers
+# dashbnoard controllers
 
     def dashboard(self):
         # redirect user to login if session doesnt exist
@@ -103,10 +127,7 @@ class Welcome(Controller):
             flash("You must first log in to access the site")
             return redirect('/')
         else:
-            allParticipants = self.models['WelcomeModel'].getAllUsers()
-
-            return self.load_view('dashboard.html', allParticipants=allParticipants)
-
+            return self.load_view('dashboard.html')
 
     def viewmilestraveled(self):
         # redirect user to login if session doesnt exist
@@ -127,39 +148,6 @@ class Welcome(Controller):
             allParticipants = self.models['WelcomeModel'].getAllParticipants()
 
             return self.load_view('tripsbydate.html', allTrips=allTrips, allParticipants=allParticipants)
-
-   
-    def addfriend(self):
-        user_id = session['id']
-        friends = self.models['WelcomeModel'].getallfriends(user_id)
-        print "This are our friends", friends
-        length=1
-        for element in friends:
-            if element['id'] == 'None':
-                length=0
-            else:
-                length=1    
-        print length, "this is the length"
-        users = self.models['WelcomeModel'].getallusersexceptselfandfriends(user_id)
-        return self.load_view('addfriend.html', friends=friends, users=users, length=length) 
-
-    def deletefriend(self, friend_id, method ='post'):
-        data ={'user_id': session['id'],
-        'friend_id': friend_id }
-        self.models['WelcomeModel'].delete(data)
-        return redirect('/addfriend') 
-
-    def add(self, friend_id, method='post'):
-        data = {'user_id': session['id'],
-                'friend_id': int(friend_id)} 
-        self.models['WelcomeModel'].add(data)
-        return redirect('/addfriend') 
-
-    def viewfriendstrips(self, method='get'):
-        data = {'user_id': session['id']}
-        friendstrips=self.models['WelcomeModel'].viewfriendstrips(data)
-        return self.load_view('friendstrips.html', friendstrips=friendstrips)      
-
 
 
     def milestraveled(self):
@@ -194,62 +182,3 @@ class Welcome(Controller):
                 if element not in pruned_places_visited:
                     pruned_places_visited.append(element)
             return self.load_view('milestraveled.html', milestraveled = milestraveled, pruned_places_visited=pruned_places_visited)
-
-
-    def createtrip(self):
-
-        trip_details = request.form
-
-        origins = [trip_details['start_loc']]
-        destinations = [trip_details['end_loc']]
-        trip_api_info = gmaps.distance_matrix(origins, destinations, mode="driving",units="imperial")
-
-        self.models['WelcomeModel'].add_trip_m(trip_details, trip_api_info)
-        return self.load_view('ongoing.html')
-
-    def upload_photo(self):
-        file = request.files['photo']
-        if file:
-            # create random file name
-            if not os.path.exists('uploads'):
-                os.mkdir('uploads')
-            if not os.path.exists('uploads/photos'):
-                os.mkdir('uploads/photos')
-            salt = uuid.uuid4().hex
-            filename = hashlib.md5(str(uuid.uuid4()) + 'iclin294rit').hexdigest()
-            up_photo = os.path.join('uploads/photos', filename)
-            # file.save(os.path.join('uploads/', filename))
-            file.save(up_photo)
-            self.models['WelcomeModel'].up_photo_m(up_photo)
-            return self.load_view('ongoing.html')
-
-    def upload_video(self):
-        file = request.files['video']
-        if file:
-            # create random file name
-            if not os.path.exists('uploads'):
-                os.mkdir('uploads')
-            if not os.path.exists('uploads/videos'):
-                os.mkdir('uploads/videos')
-            salt = uuid.uuid4().hex
-            filename = hashlib.md5(str(uuid.uuid4()) + 'iclin294rit').hexdigest()
-            up_video = os.path.join('uploads/videos', filename)
-            print "VVVVVV", up_video
-            # file.save(os.path.join('uploads/', filename))
-            file.save(up_video)
-            self.models['WelcomeModel'].up_video_m(up_video)
-            return self.load_view('ongoing.html')
-
-    def ongoing(self):
-        sess_id = session['id']
-        gmaps = googlemaps.Client(key='')
-        info_l = self.models['WelcomeModel'].ongoing_m(sess_id)
-        # print "LLLLLL", info_l[1][0]['first_name']
-        startl = info_l[0][0]['start_location']
-        endl = info_l[0][0]['end_location']
-        trip_api_info = gmaps.distance_matrix(startl, endl, units='imperial')
-        t_dist = trip_api_info['rows'][0]['elements'][0]['distance']['text']
-        t_time = trip_api_info['rows'][0]['elements'][0]['duration']['text']
-        return self.load_view('ongoing.html', info_l=info_l,t_dist=t_dist,t_time=t_time)
-
-   
