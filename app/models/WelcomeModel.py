@@ -301,7 +301,7 @@ class WelcomeModel(Model):
 
         miles = trip_api_info['rows'][0]['elements'][0]['distance']['text']
         milesStr = miles.replace(' mi','')
-        milesInt = int(milesStr)
+        milesInt = re.sub(r'\.\d+$','',milesStr)
         # create trip
         ins_trip_query = "INSERT INTO trips (name, start_date, end_date, start_location, \
         end_location, trip_miles) \

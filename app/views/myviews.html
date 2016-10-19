@@ -11,20 +11,23 @@
 			<p style="border: 3px solid black;"	>Share with friends</p>
 			<p style="border: 3px solid black;"	>Favorite trips</p>
 	</div>
-	<div style="border: 2px solid red; width:500px; height:800px; display:inline-block; vertical-align: top; text-align:center; padding:10px; float:right;  display:relative;">
-	
-	 {%for i in miles%}
-	<h3>{{i['name']}}</h3>
-	<p>Start:{{i['start_date']}}</p>
-	<p>End:{{i['end_date']}}</p>
-	<!--Participants???-->
-	<p>Miles:{{i['trip_miles']}}</p>
-	<p>Trip rating: {{i['rating']}}</p>
-	<p>Miles:{{i['trip_miles']}}</p>
-	<p>Start Location: {{i['start_location']}}</p>
-	<p>End Location: {{i['end_location']}}</p>
+	<div class="col-md-10">
+
+
+	{%for i in miles%}
+		<div style="text-align:center; padding:10px; margin-left:20px; float:left;">
+		<h3>{{i['name']}}</h3>
+		<p>Start:{{i['start_date']}}</p>
+		<p>End:{{i['end_date']}}</p>
+		<!--Participants???-->
+		<p>Miles:{{i['trip_miles']}}</p>
+		<p>Trip rating: {{i['rating']}}</p>
+		<p>Miles:{{i['trip_miles']}}</p>
+		<p>Start Location: {{i['start_location']}}</p>
+		<p>End Location: {{i['end_location']}}</p>
+
+		</div>
 	{%endfor%}
 	</div>
 	</body>
 </html>
-
